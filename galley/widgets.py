@@ -221,7 +221,11 @@ class SimpleHTMLView(Frame, object):
         self.html.tag_configure("pre", lmargin1=25, lmargin2=25)
         self.html.tag_configure("code", lmargin1=25, lmargin2=25, spacing1=10, spacing2=5, spacing3=10)
 
+        # Set up formatting for links
         self.html.tag_configure("a", foreground='blue', underline=1)
+        self.html.tag_bind('a', '<Enter>', lambda e: self.html.config(cursor='pointinghand'))
+        self.html.tag_bind('a', '<Leave>', lambda e: self.html.config(cursor=''))
+
         # Set up internal event handlers on links
         for modifier in [
                     '',
@@ -281,6 +285,7 @@ class SimpleHTMLView(Frame, object):
         filename = self._filename
         self._filename = None
         self.filename = filename
+
 
     def link_bind(self, sequence, func):
         "Bind a sequence on link clicks to the given function"
