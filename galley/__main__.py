@@ -37,7 +37,7 @@ def main():
     try:
         view.mainloop()
     except KeyboardInterrupt:
-        view.on_quit()
+        view.cmd_quit()
 
 if __name__ == '__main__':
     main()

@@ -5,9 +5,10 @@ import htmlentitydefs
 import os
 from ttk import *
 from Tkinter import *
-from tkFont import Font
 
 from tkreadonly import ReadOnlyText, normalize_sequence
+
+from galley.monitor import project_visitor
 
 
 def nodify(node):
@@ -312,6 +313,7 @@ class SimpleHTMLView(Frame, object):
         return link_handler
 
 
+
 class FileView(Treeview):
     def __init__(self, *args, **kwargs):
         # Only a single stack frame can be selected at a time.
@@ -325,26 +327,9 @@ class FileView(Treeview):
 
         # Populate the file view
         if self.root:
-            os.path.walk(self.root, self._visitor, None)
+            os.path.walk(self.root, project_visitor(self.insert_dirname, self.insert_filename), None)
 
-    def _visitor(self, data, dirname, filesindir):
-        prune = []
-        self.insert_dirname(dirname)
-        for filename in filesindir:
-            if os.path.isdir(os.path.join(dirname, filename)):
-                if filename in ('.git', '.hg') or filename.endswith('.egg-info') or filename.startswith('_'):
-                    prune.append(filename)
-            else:
-                name, ext = os.path.splitext(filename)
-                if ext in ('.txt', '.rst'):
-                    self.insert_filename(dirname, filename)
-                else:
-                    prune.append(filename)
-
-        for filename in prune:
-            filesindir.remove(filename)
-
-    def insert_dirname(self, dirname):
+    def insert_dirname(self, dirname, data=None):
         "Ensure that a specific directory exists in the breakpoint tree"
         if not self.exists(nodify(dirname)):
             nodename = nodify(dirname)
@@ -356,7 +341,7 @@ class FileView(Treeview):
                     path = nodify(child)
                     base = ''
                 else:
-                    self.insert_dirname(parent)
+                    self.insert_dirname(parent, data)
                     base = nodify(parent)
                     path = nodify(child)
             else:
@@ -365,7 +350,7 @@ class FileView(Treeview):
                     path = nodify(parent)
                     base = ''
                 else:
-                    self.insert_dirname(parent)
+                    self.insert_dirname(parent, data)
                     base = nodify(parent)
                     path = nodify(child)
 
@@ -384,7 +369,7 @@ class FileView(Treeview):
                 tags=['directory']
             )
 
-    def insert_filename(self, dirname, filename):
+    def insert_filename(self, dirname, filename, data=None):
         "Ensure that a specific filename exists in the breakpoint tree"
         full_filename = os.path.join(dirname, filename)
         if not self.exists(nodify(full_filename)):
@@ -397,7 +382,7 @@ class FileView(Treeview):
             if full_filename == self.normalizer(full_filename):
                 if self.root:
                     return
-                self.insert_dirname(dirname)
+                self.insert_dirname(dirname, data)
             else:
                 if self.root is None:
                     return

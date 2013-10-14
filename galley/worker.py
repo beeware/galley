@@ -29,7 +29,7 @@ InitializationStart = namedtuple('InitializationStart', [])
 InitializationEnd = namedtuple('InitializationEnd', ['extension'])
 
 BuildStart = namedtuple('BuildStart', ['build_type'])
-BuildEnd = namedtuple('BuildEnd', [])
+BuildEnd = namedtuple('BuildEnd', ['filenames'])
 
 
 ######################################################################
@@ -139,17 +139,23 @@ class SphinxWarningHandler(ANSIOutputHandler):
     def emit(self, content):
         content = content.strip()
         if content:
+            print "WARNING>>>", content
             if content.startswith('WARNING: '):
                 self.queue.put(WarningOutput(filename=None, lineno=None, message=content[9:]))
             else:
                 parts = content.split(':')
-                self.queue.put(WarningOutput(filename=parts[0], lineno=int(parts[1]), message=':'.join(parts[3:]).strip()))
+                self.queue.put(
+                    WarningOutput(
+                        filename=parts[0],
+                        lineno=int(parts[1]) if parts[1] else None,
+                        message=':'.join(parts[3:]).strip())
+                    )
 
 
 def sphinx_worker(base_path, work_queue, output_queue):
     "A background worker thread performing Sphinx compilations"
     # Set up the Sphinx instance
-    srcdir = os.path.join(base_path, 'docs')
+    srcdir = base_path
     confdir = srcdir
     outdir = os.path.join(srcdir, '_build', 'html')
     freshenv = False
@@ -185,19 +191,19 @@ def sphinx_worker(base_path, work_queue, output_queue):
             output_queue.put(InitializationStart())
             freshenv = True
             sphinx = Sphinx(srcdir, confdir, outdir, doctreedir, buildername,
-                                 confoverrides, status, warning, freshenv,
-                                 warningiserror, tags)
+                             confoverrides, status, warning, freshenv,
+                             warningiserror, tags)
             output_queue.put(InitializationEnd(extension=sphinx.config.source_suffix))
 
         elif isinstance(cmd, BuildAll):
             output_queue.put(BuildStart(build_type='all'))
             sphinx.builder.build_all()
-            output_queue.put(BuildEnd())
+            output_queue.put(BuildEnd(filenames=None))
 
         elif isinstance(cmd, BuildSpecific):
             output_queue.put(BuildStart(build_type='specific'))
             sphinx.builder.build_specific(cmd.filenames)
-            output_queue.put(BuildEnd())
+            output_queue.put(BuildEnd(filenames=cmd.filenames))
 
         # Reset the warning count so that they don't accumulate between builds.
         sphinx._warncount = 0

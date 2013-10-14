@@ -4,7 +4,7 @@
 This is the "View" of the MVC world.
 """
 import os
-from threading import Thread
+import threading
 from Tkinter import *
 from tkFont import *
 from ttk import *
@@ -20,6 +20,7 @@ except ImportError:
 
 from galley import VERSION, NUM_VERSION
 from galley.widgets import SimpleHTMLView, FileView
+from galley.monitor import file_monitor, FileChange
 from galley.worker import (
     sphinx_worker,
     ReloadConfig,
@@ -111,13 +112,19 @@ class MainWindow(object):
         # Set up a background worker thread to build docs.
         self.work_queue = Queue()
         self.results_queue = Queue()
-        self.worker_thread = Thread(target=sphinx_worker, args=(self.base_path, self.work_queue, self.results_queue))
+        self.worker_thread = threading.Thread(target=sphinx_worker, args=(os.path.join(self.base_path, 'docs'), self.work_queue, self.results_queue))
         self.worker_thread.daemon = True
         self.worker_thread.start()
 
+        # Set up a background monitor thread.
+        self.stop_event = threading.Event()
+        self.monitor_thread = threading.Thread(target=file_monitor, args=(os.path.join(self.base_path, 'docs'), self.stop_event, self.results_queue))
+        self.monitor_thread.daemon = True
+        self.monitor_thread.start()
+
         # Requeue for another update in 40ms (24*40ms == 1s - so this is
         # as fast as we need to update to match human visual acuity)
-        self.root.after(40, self.handle_worker_output)
+        self.root.after(40, self.handle_background_tasks)
 
 
     ######################################################
@@ -331,11 +338,16 @@ class MainWindow(object):
     def mainloop(self):
         self.root.mainloop()
 
-    def handle_worker_output(self):
+    def handle_background_tasks(self):
         "Background queue handler"
         try:
             while True:
                 result = self.results_queue.get(block=False)
+
+                ########################
+                # Output from the worker
+                ########################
+
                 if isinstance(result, Output):
                     self.run_status.set(result.message.capitalize())
 
@@ -413,6 +425,24 @@ class MainWindow(object):
                     self.rebuild_file_button.configure(state=ACTIVE)
                     self.reload_config_button.configure(state=ACTIVE)
 
+                    current_file = self.project_file_tree.selection()[0]
+                    if result.filenames is None or current_file in result.filenames:
+                        self.html.refresh()
+
+                #########################
+                # Output from the monitor
+                #########################
+
+                elif isinstance(result, FileChange):
+                    # Make sure the new files are in the tree
+                    for f in result.new:
+                        dirname, filename = os.path.split(f)
+                        self.project_file_tree.insert_dirname(dirname)
+                        self.project_file_tree.insert_filename(dirname, filename)
+
+                    # Enqueue a build task for all the new and modified documents.
+                    self.work_queue.put(BuildSpecific(result.new + result.modified))
+
         except Empty:
             # queue.get() raises an exception when the queue is empty.
             # This means there is no more output to consume at this time.
@@ -420,7 +450,7 @@ class MainWindow(object):
 
         # Requeue for another update in 40ms (24*40ms == 1s - so this is
         # as fast as we need to update to match human visual acuity)
-        self.root.after(40, self.handle_worker_output)
+        self.root.after(40, self.handle_background_tasks)
 
     ######################################################
     # TK Command handlers
@@ -428,9 +458,15 @@ class MainWindow(object):
 
     def cmd_quit(self):
         "Quit the program"
-        # Wait for the command thread to die.
+        # Notify the worker and monitor threads that we want to quit
         self.work_queue.put(Quit())
+        self.stop_event.set()
+
+        # Wait for the threads to die.
         self.worker_thread.join()
+        self.monitor_thread.join()
+
+        # Quit the main app.
         self.root.quit()
 
     def cmd_back(self, event=None):

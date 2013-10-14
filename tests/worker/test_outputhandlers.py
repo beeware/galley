@@ -195,6 +195,21 @@ class SphinxWarningHandlerTest(unittest.TestCase):
         # Nothing left in the queue
         self.assertTrue(self.queue.empty())
 
+
+    def test_file_warning(self):
+        "A warning message that mentions a filename is parsed for file name/number content"
+
+        self.handler.write("/beeware/galley/docs/internals/newfile.rst:: WARNING: document isn't included in any toctree")
+        self.handler.flush()
+
+        output = self.queue.get(block=False)
+        self.assertEqual(output, WarningOutput(filename='/beeware/galley/docs/internals/newfile.rst', lineno=None, message="document isn't included in any toctree"))
+
+        # Nothing left in the queue
+        self.assertTrue(self.queue.empty())
+
+
+
     def test_file_warning(self):
         "A warning message that mentions a filename is parsed for file name/number content"
 
