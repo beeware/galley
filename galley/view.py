@@ -17,6 +17,7 @@ try:
 except ImportError:
     from queue import Queue, Empty  # python 3.x
 
+from tkreadonly import ReadOnlyText
 
 from galley import VERSION, NUM_VERSION
 from galley.widgets import SimpleHTMLView, FileView
@@ -93,7 +94,12 @@ class MainWindow(object):
         self._history_index = 0
         self._traversing_history = False
 
+        # The default source file extension. This will be updated once we have
+        # parsed the project config file.
         self.source_extension = '.rst'
+
+        # Known warnings, indexed by source file.
+        self.warning_output = {}
 
         # Setup the menu
         self._setup_menubar()
@@ -108,6 +114,10 @@ class MainWindow(object):
         self.root.rowconfigure(0, weight=0)
         self.root.rowconfigure(1, weight=1)
         self.root.rowconfigure(2, weight=0)
+
+        # Now that we've laid out the grid, hide the error and output text
+        # until we actually have an error/output to display
+        self._hide_warnings()
 
         # Set up a background worker thread to build docs.
         self.work_queue = Queue()
@@ -242,18 +252,33 @@ class MainWindow(object):
         # Label for current file
         self.current_file = StringVar()
         self.current_file_label = Label(self.html_frame, textvariable=self.current_file)
-        self.current_file_label.grid(column=0, row=0, sticky=(W, E))
+        self.current_file_label.grid(column=0, row=0, columnspan=3, sticky=(W, E))
 
         # Code display area
         self.html = SimpleHTMLView(self.html_frame)
-        self.html.grid(column=0, row=1, sticky=(N, S, E, W))
+        self.html.grid(column=0, row=1, columnspan=3, sticky=(N, S, E, W))
 
         self.html.link_bind('<1>', self.on_link_click)
 
+        # Warnings
+        self.warnings_label = Label(self.html_frame, text='Warnings:')
+        self.warnings_label.grid(column=0, row=2, pady=5, sticky=(N, E,))
+
+        self.warnings = ReadOnlyText(self.html_frame)
+        self.warnings.grid(column=1, row=2, pady=5, columnspan=2, sticky=(N, S, E, W,))
+        self.warnings.tag_configure('warning', wrap=WORD, lmargin1=5, lmargin2=20, spacing1=2, spacing3=2)
+        self.warnings_scrollbar = Scrollbar(self.html_frame, orient=VERTICAL)
+        self.warnings_scrollbar.grid(column=2, row=2, pady=5, sticky=(N, S))
+        self.warnings.config(yscrollcommand=self.warnings_scrollbar.set)
+        self.warnings_scrollbar.config(command=self.warnings.yview)
+
         # Set up weights for the html frame's content
-        self.html_frame.columnconfigure(0, weight=1)
+        self.html_frame.columnconfigure(0, weight=0)
+        self.html_frame.columnconfigure(1, weight=1)
+        self.html_frame.columnconfigure(2, weight=0)
         self.html_frame.rowconfigure(0, weight=0)
-        self.html_frame.rowconfigure(1, weight=1)
+        self.html_frame.rowconfigure(1, weight=4)
+        self.html_frame.rowconfigure(2, weight=1)
 
         self.content.add(self.html_frame)
 
@@ -310,6 +335,9 @@ class MainWindow(object):
 
             # self.html.anchor = anchor
 
+            # Show the warnings panel (if needed)
+            self._show_warnings(filename)
+
             # Add this file to history.
             path, ext = os.path.splitext(filename)
             path = path.replace('docs/_build/html', 'docs')
@@ -327,9 +355,51 @@ class MainWindow(object):
             else:
                 self._traversing_history = False
 
+
         except IOError:
             tkMessageBox.showerror(message='%s has not been compiled to HTML' % self.filename_normalizer(filename))
 
+    def _hide_warnings(self):
+        "Hide the warnings output panel"
+        self.warnings_label.grid_remove()
+        self.warnings.grid_remove()
+        self.warnings_scrollbar.grid_remove()
+        self.html_frame.rowconfigure(2, weight=0)
+
+    def _show_warnings(self, filename):
+        "Show the warnings output panel"
+
+        # Build a list of all displayed warnings
+        warnings = []
+        # First, the global warnings
+        for (lineno, warning) in self.warning_output.get(None, []):
+            if lineno:
+                warnings.append(u'○ Line %s: %s' % (lineno, warning))
+            else:
+                warnings.append(u'○ %s' % warning)
+
+        # Then, the file specific warnings.
+        for (lineno, warning) in self.warning_output.get(filename, []):
+            if lineno:
+                warnings.append(u'● Line %s: %s' % (lineno, warning))
+            else:
+                warnings.append(u'● %s' % warning)
+
+        # If there are warnings, show the widget, and populate it.
+        # Otherwise, hide the widget.
+        if warnings:
+            self.warnings.delete('1.0', END)
+            for warning in warnings:
+                self.warnings.insert(END, warning, 'warning')
+                self.warnings.insert(END, '\n')
+
+            self.warnings_label.grid()
+            self.warnings.grid()
+            self.warnings.config(height=len(warnings))
+            self.warnings_scrollbar.grid()
+            self.html_frame.rowconfigure(2, weight=1)
+        else:
+            self._hide_warnings()
 
     ######################################################
     # TK Main loop
@@ -352,10 +422,15 @@ class MainWindow(object):
                     self.run_status.set(result.message.capitalize())
 
                 elif isinstance(result, WarningOutput):
-                    print 'WARNING', result.filename, result.lineno, result.message
+                    if result.filename:
+                        source_file = os.path.join(self.base_path, 'docs', result.filename)
+                        self.project_file_tree.item(source_file, tags=['file', 'warning'])
+
+                    # Archive the warning.
+                    self.warning_output.setdefault(result.filename, []).append((result.lineno, result.message))
 
                 elif isinstance(result, InitializationStart):
-                    # S
+                    # Handle the "Start of sphinx init" message
                     self.progress.configure(mode='indeterminate', variable=None, maximum=None)
                     self.rebuild_all_button.configure(state=DISABLED)
                     self.rebuild_file_button.configure(state=DISABLED)
@@ -388,6 +463,25 @@ class MainWindow(object):
                     self.rebuild_file_button.configure(state=DISABLED)
                     self.reload_config_button.configure(state=DISABLED)
 
+                    if result.filenames is None:
+                        # Build is for all files. Clear the warnings, and
+                        # set all files as dirty.
+                        print "ALL FILES DIRTY"
+                        self.warning_output = {}
+                        filenames = self.project_file_tree.tag_has('file')
+                    else:
+                        # Build is for a selection of files. Clear the global warnings
+                        # and the file warnings, and set selected files as dirty.
+                        print "SOME FILES DIRTY", result.filenames
+                        filenames = result.filenames
+
+                        self.warning_output[None] = []
+                        for f in filenames:
+                            self.warning_output[f] = []
+
+                    for f in filenames:
+                        self.project_file_tree.item(f, tags=['file', 'dirty'])
+
                 elif isinstance(result, Progress):
                     try:
                         base, max_val = {
@@ -413,6 +507,13 @@ class MainWindow(object):
                         progress = int(base + max_val * result.progress / 100.0)
                         self.progress_value.set(progress)
 
+                        # If this is a 'writing output' update, we have a file generated
+                        # so update the markup of the tree
+                        if result.stage == 'writing output':
+                            source_file = os.path.join(self.base_path, 'docs', result.context + self.source_extension)
+                            if not self.project_file_tree.tag_has('warning', source_file):
+                                self.project_file_tree.item(source_file, tags=['file'])
+
                     except KeyError:
                         pass
 
@@ -428,6 +529,7 @@ class MainWindow(object):
                     current_file = self.project_file_tree.selection()[0]
                     if result.filenames is None or current_file in result.filenames:
                         self.html.refresh()
+                        self._show_warnings(current_file)
 
                 #########################
                 # Output from the monitor

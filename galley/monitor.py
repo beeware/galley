@@ -50,6 +50,7 @@ class Monitor(object):
         self.new_files = []
         self.modified_files = []
 
+
 def gather_dir(dirname, monitor):
     "The visitor utility method to catch directory modifications"
     stat = os.stat(dirname)

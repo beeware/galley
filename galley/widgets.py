@@ -313,7 +313,6 @@ class SimpleHTMLView(Frame, object):
         return link_handler
 
 
-
 class FileView(Treeview):
     def __init__(self, *args, **kwargs):
         # Only a single stack frame can be selected at a time.
@@ -324,6 +323,8 @@ class FileView(Treeview):
 
         # Set up styles for line numbers
         self.tag_configure('directory', foreground='#999')
+        self.tag_configure('dirty', foreground='orange')
+        self.tag_configure('warning', foreground='red')
 
         # Populate the file view
         if self.root:

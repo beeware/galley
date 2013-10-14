@@ -28,7 +28,7 @@ Progress = namedtuple('Progress', ['stage', 'progress', 'context'])
 InitializationStart = namedtuple('InitializationStart', [])
 InitializationEnd = namedtuple('InitializationEnd', ['extension'])
 
-BuildStart = namedtuple('BuildStart', ['build_type'])
+BuildStart = namedtuple('BuildStart', ['filenames'])
 BuildEnd = namedtuple('BuildEnd', ['filenames'])
 
 
@@ -139,7 +139,6 @@ class SphinxWarningHandler(ANSIOutputHandler):
     def emit(self, content):
         content = content.strip()
         if content:
-            print "WARNING>>>", content
             if content.startswith('WARNING: '):
                 self.queue.put(WarningOutput(filename=None, lineno=None, message=content[9:]))
             else:
@@ -196,12 +195,12 @@ def sphinx_worker(base_path, work_queue, output_queue):
             output_queue.put(InitializationEnd(extension=sphinx.config.source_suffix))
 
         elif isinstance(cmd, BuildAll):
-            output_queue.put(BuildStart(build_type='all'))
+            output_queue.put(BuildStart(filenames=None))
             sphinx.builder.build_all()
             output_queue.put(BuildEnd(filenames=None))
 
         elif isinstance(cmd, BuildSpecific):
-            output_queue.put(BuildStart(build_type='specific'))
+            output_queue.put(BuildStart(filenames=cmd.filenames))
             sphinx.builder.build_specific(cmd.filenames)
             output_queue.put(BuildEnd(filenames=cmd.filenames))
 
