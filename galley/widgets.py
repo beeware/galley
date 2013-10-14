@@ -5,6 +5,7 @@ import htmlentitydefs
 import os
 from ttk import *
 from Tkinter import *
+from tkFont import Font
 
 from tkreadonly import ReadOnlyText, normalize_sequence
 
@@ -261,14 +262,14 @@ class SimpleHTMLView(Frame, object):
     def filename(self, value):
         "Set the file being displayed by the view"
         if self._filename != value:
+            # Store the new filename
+            self._filename = value
+
             self.html.delete('1.0', END)
 
             with open(value) as htmlfile:
                 self.parser.feed(htmlfile.read())
 
-            # Store the new filename, and clear any current line
-            self._filename = value
-            self._line = None
 
     def refresh(self):
         "Force a refresh of the file currently in the view"
