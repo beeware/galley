@@ -275,17 +275,26 @@ class SimpleHTMLView(Frame, object):
             with open(value) as htmlfile:
                 self.parser.feed(htmlfile.read())
 
-
     def refresh(self):
         "Force a refresh of the file currently in the view"
         # Remember the old file, set the internal tracking of the
         # filename to None, then use the property to set the filename
         # again. Since the internal representation has changed, this
         # will force a reload.
+
+        # We do a little trick here to accurately restore scrolling position.
+        # Remember the first and last line that is visible.
+        first_line = self.html.index('@0,0')
+        last_line = self.html.index('@0,%s' % self.html.winfo_height())
+
         filename = self._filename
         self._filename = None
         self.filename = filename
 
+        # Now restore the scroll position. Scroll to the last visible line,
+        # Then ensure the first visible line is still visible.
+        self.html.see(last_line)
+        self.html.see(first_line)
 
     def link_bind(self, sequence, func):
         "Bind a sequence on link clicks to the given function"

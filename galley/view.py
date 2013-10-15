@@ -115,10 +115,6 @@ class MainWindow(object):
         self.root.rowconfigure(1, weight=1)
         self.root.rowconfigure(2, weight=0)
 
-        # Now that we've laid out the grid, hide the error and output text
-        # until we actually have an error/output to display
-        self._hide_warnings()
-
         # Set up a background worker thread to build docs.
         self.work_queue = Queue()
         self.results_queue = Queue()
@@ -264,7 +260,7 @@ class MainWindow(object):
         self.warnings_label = Label(self.html_frame, text='Warnings:')
         self.warnings_label.grid(column=0, row=2, pady=5, sticky=(N, E,))
 
-        self.warnings = ReadOnlyText(self.html_frame)
+        self.warnings = ReadOnlyText(self.html_frame, height=6)
         self.warnings.grid(column=1, row=2, pady=5, columnspan=2, sticky=(N, S, E, W,))
         self.warnings.tag_configure('warning', wrap=WORD, lmargin1=5, lmargin2=20, spacing1=2, spacing3=2)
         self.warnings_scrollbar = Scrollbar(self.html_frame, orient=VERTICAL)
@@ -359,13 +355,6 @@ class MainWindow(object):
         except IOError:
             tkMessageBox.showerror(message='%s has not been compiled to HTML' % self.filename_normalizer(filename))
 
-    def _hide_warnings(self):
-        "Hide the warnings output panel"
-        self.warnings_label.grid_remove()
-        self.warnings.grid_remove()
-        self.warnings_scrollbar.grid_remove()
-        self.html_frame.rowconfigure(2, weight=0)
-
     def _show_warnings(self, filename):
         "Show the warnings output panel"
 
@@ -387,19 +376,11 @@ class MainWindow(object):
 
         # If there are warnings, show the widget, and populate it.
         # Otherwise, hide the widget.
-        if warnings:
-            self.warnings.delete('1.0', END)
-            for warning in warnings:
-                self.warnings.insert(END, warning, 'warning')
-                self.warnings.insert(END, '\n')
+        self.warnings.delete('1.0', END)
+        for warning in warnings:
+            self.warnings.insert(END, warning, 'warning')
+            self.warnings.insert(END, '\n')
 
-            self.warnings_label.grid()
-            self.warnings.grid()
-            self.warnings.config(height=len(warnings))
-            self.warnings_scrollbar.grid()
-            self.html_frame.rowconfigure(2, weight=1)
-        else:
-            self._hide_warnings()
 
     ######################################################
     # TK Main loop
@@ -466,13 +447,12 @@ class MainWindow(object):
                     if result.filenames is None:
                         # Build is for all files. Clear the warnings, and
                         # set all files as dirty.
-                        print "ALL FILES DIRTY"
-                        self.warning_output = {}
                         filenames = self.project_file_tree.tag_has('file')
+
+                        self.warning_output = {}
                     else:
                         # Build is for a selection of files. Clear the global warnings
                         # and the file warnings, and set selected files as dirty.
-                        print "SOME FILES DIRTY", result.filenames
                         filenames = result.filenames
 
                         self.warning_output[None] = []
