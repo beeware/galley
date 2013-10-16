@@ -318,7 +318,7 @@ class MainWindow(object):
         """
         # TEMP: Rework into HTML view
         path, ext = os.path.splitext(filename)
-        html_filename = path.replace(os.path.join(self.base_path, 'docs'), os.path.join(self.base_path, 'docs', '_build', 'html')) + '.html'
+        compiled_filename = path.replace(os.path.join(self.base_path, 'docs'), os.path.join(self.base_path, 'docs', '_build', 'json')) + '.fjson'
 
         # Set the filename label for the current file
         self.current_file.set(self.filename_normalizer(filename))
@@ -327,7 +327,7 @@ class MainWindow(object):
             # Update the html view; this means changing the displayed file
             # if necessary, and updating the current line.
             if filename != self.html.filename:
-                self.html.filename = html_filename
+                self.html.filename = compiled_filename
 
             # self.html.anchor = anchor
 
@@ -336,7 +336,7 @@ class MainWindow(object):
 
             # Add this file to history.
             path, ext = os.path.splitext(filename)
-            path = path.replace('docs/_build/html', 'docs')
+            path = path.replace('docs/_build/json', 'docs')
 
             # History traversal is a temporary operation. If we're traversing
             # history, we won't push this onto the stack... but only this once.
@@ -350,7 +350,6 @@ class MainWindow(object):
                 self._history_index = self._history_index + 1
             else:
                 self._traversing_history = False
-
 
         except IOError:
             tkMessageBox.showerror(message='%s has not been compiled to HTML' % self.filename_normalizer(filename))
@@ -636,5 +635,9 @@ class MainWindow(object):
         else:
             # Link refers to HTML; convert back to source filename.
             path, ext = os.path.splitext(url_parts.path)
-            self.project_file_tree.selection_set(os.path.join(self.base_path, 'docs', path + self.source_extension))
+            filename = os.path.join(self.base_path, 'docs', path[:-1] + self.source_extension)
+            if os.path.isfile(filename):
+                self.project_file_tree.selection_set(filename)
+            else:
+                tkMessageBox.showerror(message="Couldn't find %s" % self.filename_normalizer(filename))
 

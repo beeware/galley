@@ -2,6 +2,7 @@
 import hashlib
 from HTMLParser import HTMLParser
 import htmlentitydefs
+import json
 import os
 from ttk import *
 from Tkinter import *
@@ -46,7 +47,7 @@ class RenderingHTMLParser(HTMLParser):
 
     def reset_state(self):
         # Writing state
-        self.pen_down = False
+        self.pen_down = True
         self.cleared = True
 
         self.links = {}
@@ -83,16 +84,13 @@ class RenderingHTMLParser(HTMLParser):
             self.cleared = True
 
         # Now check to see if we need to raise or lower the pen.
-        if tag == 'div' and attr_dict.get('class') == 'body':
-            self.pen_down = True
-        else:
-            # Check the SILENCED_TAGS. If we're starting a silenced tag,
-            # and all the classes match, raise the pen.
-            classes = attr_dict.get('class', '').split(' ')
-            for stag, sclasses in self.SILENCED_TAGS:
-                if tag == stag and all(sclass in classes for sclass in sclasses):
-                    self.pen_down = False
-                    break
+        # Check the SILENCED_TAGS. If we're starting a silenced tag,
+        # and all the classes match, raise the pen.
+        classes = attr_dict.get('class', '').split(' ')
+        for stag, sclasses in self.SILENCED_TAGS:
+            if tag == stag and all(sclass in classes for sclass in sclasses):
+                self.pen_down = False
+                break
 
         if tag == 'a':
             href_hash = hashlib.md5(attr_dict['href']).hexdigest()[:8]
@@ -125,16 +123,13 @@ class RenderingHTMLParser(HTMLParser):
             self.current_link.pop()
 
         # Now check to see if we need to raise or lower the pen.
-        if tag == 'div' and attr_dict.get('class') == 'body':
-            self.pen_down = False
-        else:
-            # Check the SILENCED_TAGS. If we're ending a silenced tag,
-            # and all the classes match, drop the pen.
-            classes = attr_dict.get('class', '').split(' ')
-            for stag, sclasses in self.SILENCED_TAGS:
-                if tag == stag and all(sclass in classes for sclass in sclasses):
-                    self.pen_down = True
-                    break
+        # Check the SILENCED_TAGS. If we're ending a silenced tag,
+        # and all the classes match, drop the pen.
+        classes = attr_dict.get('class', '').split(' ')
+        for stag, sclasses in self.SILENCED_TAGS:
+            if tag == stag and all(sclass in classes for sclass in sclasses):
+                self.pen_down = True
+                break
 
     def handle_data(self, data):
         """Handle actual visible content.
@@ -273,7 +268,8 @@ class SimpleHTMLView(Frame, object):
             self.html.delete('1.0', END)
 
             with open(value) as htmlfile:
-                self.parser.feed(htmlfile.read())
+                content = json.load(htmlfile)
+                self.parser.feed(content['body'])
 
     def refresh(self):
         "Force a refresh of the file currently in the view"

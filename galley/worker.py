@@ -156,10 +156,10 @@ def sphinx_worker(base_path, work_queue, output_queue):
     # Set up the Sphinx instance
     srcdir = base_path
     confdir = srcdir
-    outdir = os.path.join(srcdir, '_build', 'html')
+    outdir = os.path.join(srcdir, '_build', 'json')
     freshenv = False
     warningiserror = False
-    buildername = 'html'
+    buildername = 'json'
     # verbosity = 0
     # parallel = 0
     status = SphinxStatusHandler(output_queue)
