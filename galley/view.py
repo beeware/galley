@@ -636,8 +636,11 @@ class MainWindow(object):
             # Link refers to HTML; convert back to source filename.
             path, ext = os.path.splitext(url_parts.path)
             filename = os.path.join(self.base_path, 'docs', path[:-1] + self.source_extension)
+            index_filename = os.path.join(self.base_path, 'docs', path, 'index' + self.source_extension)
             if os.path.isfile(filename):
                 self.project_file_tree.selection_set(filename)
+            elif os.path.isfile(index_filename):
+                self.project_file_tree.selection_set(index_filename)
             else:
                 tkMessageBox.showerror(message="Couldn't find %s" % self.filename_normalizer(filename))
 
