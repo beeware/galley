@@ -1,5 +1,27 @@
+.. image:: http://pybee.org/project/projects/tools/galley/galley.png
+    :width: 72px
+    :target: https://pybee.org/galley
+
 Galley
 ======
+
+.. image:: https://img.shields.io/pypi/pyversions/galley.svg
+    :target: https://pypi.python.org/pypi/galley
+
+.. image:: https://img.shields.io/pypi/v/galley.svg
+    :target: https://pypi.python.org/pypi/galley
+
+.. image:: https://img.shields.io/pypi/status/galley.svg
+    :target: https://pypi.python.org/pypi/galley
+
+.. image:: https://img.shields.io/pypi/l/galley.svg
+    :target: https://github.com/pybee/galley/blob/master/LICENSE
+
+.. image:: https://travis-ci.org/pybee/galley.svg?branch=master
+    :target: https://travis-ci.org/pybee/galley
+
+.. image:: https://badges.gitter.im/pybee/general.svg
+    :target: https://gitter.im/pybee/general
 
 GUI tool to assist in drafting documentation.
 
@@ -48,11 +70,12 @@ Community
 
 Galley is part of the `BeeWare suite`_. You can talk to the community through:
 
- * `@pybeeware on Twitter`_
+* `@pybeeware on Twitter`_
 
- * The `BeeWare Users Mailing list`_, for questions about how to use the BeeWare suite.
+* The `pybee/general`_ channel on Gitter.
 
- * The `BeeWare Developers Mailing list`_, for discussing the development of new features in the BeeWare suite, and ideas for new tools for the suite.
+We foster a welcoming and respectful community as described in our
+`BeeWare Community Code of Conduct`_.
 
 Contributing
 ------------
@@ -63,8 +86,8 @@ want to contribute code, please `fork the code`_ and `submit a pull request`_.
 .. _BeeWare suite: http://pybee.org
 .. _Read The Docs: http://galley.readthedocs.org
 .. _@pybeeware on Twitter: https://twitter.com/pybeeware
-.. _BeeWare Users Mailing list: https://groups.google.com/forum/#!forum/beeware-users
-.. _BeeWare Developers Mailing list: https://groups.google.com/forum/#!forum/beeware-developers
+.. _pybee/general: https://gitter.im/pybee/general
+.. _BeeWare Community Code of Conduct: http://pybee.org/community/behavior/
 .. _log them on Github: https://github.com/pybee/galley/issues
 .. _fork the code: https://github.com/pybee/galley
 .. _submit a pull request: https://github.com/pybee/galley/pulls
