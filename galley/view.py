@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 
 from tkreadonly import ReadOnlyText
 
-from galley import NUM_VERSION, VERSION
+from galley import DISTRIBUTION_NAME, NUM_VERSION, VERSION
 from galley.monitor import FileChange, file_monitor
 from galley.widgets import FileView, SimpleHTMLView
 from galley.worker import (BuildAll, BuildEnd, BuildSpecific, BuildStart,
@@ -613,24 +613,24 @@ class MainWindow(object):
 
     def cmd_galley_page(self):
         "Show the Galley project page"
-        webbrowser.open_new('http://pybee.org/galley')
+        webbrowser.open_new('http://beeware.org/galley')
 
     def cmd_galley_github(self):
         "Show the Galley GitHub repo"
-        webbrowser.open_new('http://github.com/pybee/galley')
+        webbrowser.open_new('http://github.com/beeware/galley')
 
     def cmd_galley_docs(self):
         "Show the Galley documentation"
         # If this is a formal release, show the docs for that
         # version. otherwise, just show the head docs.
         if len(NUM_VERSION) == 3:
-            webbrowser.open_new('https://galley.readthedocs.io/en/v%s/' % VERSION)
+            webbrowser.open_new('https://%s.readthedocs.io/en/v%s/' % (DISTRIBUTION_NAME, VERSION))
         else:
-            webbrowser.open_new('https://galley.readthedocs.io/')
+            webbrowser.open_new('https://%s.readthedocs.io/' % DISTRIBUTION_NAME)
 
     def cmd_beeware_page(self):
         "Show the BeeWare project page"
-        webbrowser.open_new('http://pybee.org/')
+        webbrowser.open_new('http://beeware.org/')
 
     ######################################################
     # Handlers for GUI actions

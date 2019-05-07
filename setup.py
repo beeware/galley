@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-from galley import VERSION
+from galley import DISTRIBUTION_NAME, VERSION
 
 try:
     readme = open('README.rst')
@@ -12,13 +12,13 @@ finally:
 required_pkgs = ['tkreadonly', 'sphinx']
 
 setup(
-    name='galley',
+    name=DISTRIBUTION_NAME,
     version=VERSION,
     description='GUI tool to assist in drafting documentation.',
     long_description=long_description,
     author='Russell Keith-Magee',
     author_email='russell@keith-magee.com',
-    url='http://pybee.org/galley',
+    url='http://beeware.org/galley',
     packages=[
         'galley',
     ],

@@ -683,7 +683,7 @@ class FileView(Treeview):
 
         # Populate the file view
         if self.root:
-            os.path.walk(self.root, project_visitor(self.insert_dirname, self.insert_filename), None)
+            os.walk(self.root, project_visitor(self.insert_dirname, self.insert_filename), None)
 
     def insert_dirname(self, dirname, data=None):
         "Ensure that a specific directory exists in the breakpoint tree"
