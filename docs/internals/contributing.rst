@@ -4,9 +4,9 @@ Contributing to Galley
 
 If you experience problems with Galley, `log them on GitHub`_. If you want to contribute code, please `fork the code`_ and `submit a pull request`_.
 
-.. _log them on Github: https://github.com/pybee/galley/issues
-.. _fork the code: https://github.com/pybee/galley
-.. _submit a pull request: https://github.com/pybee/galley/pulls
+.. _log them on Github: https://github.com/beeware/galley/issues
+.. _fork the code: https://github.com/beeware/galley
+.. _submit a pull request: https://github.com/beeware/galley/pulls
 
 
 Setting up your development environment
@@ -17,7 +17,7 @@ is to install a virtual environment, install the required dependencies and
 start coding. Assuming that you are using ``virtualenvwrapper``, you only have
 to run::
 
-    $ git clone git@github.com:pybee/galley.git
+    $ git clone git@github.com:beeware/galley.git
     $ cd galley
     $ mkvirtualenv galley
 
@@ -28,9 +28,5 @@ virutal envrionment::
 
     $ pip install -e .
     $ pip install -r requirements_dev.txt
-
-In case you are running a python version ``< 2.7`` please use the
-``requirements_dev.py26.txt`` instead because ``unittest2`` is not part
-of the standard library for these version.
 
 Now you are ready to start hacking! Have fun!

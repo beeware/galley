@@ -15,13 +15,13 @@ Galley
     :target: https://pypi.python.org/pypi/galley
 
 .. image:: https://img.shields.io/pypi/l/galley.svg
-    :target: https://github.com/pybee/galley/blob/master/LICENSE
+    :target: https://github.com/beeware/galley/blob/master/LICENSE
 
-.. image:: https://travis-ci.org/pybee/galley.svg?branch=master
-    :target: https://travis-ci.org/pybee/galley
+.. image:: https://travis-ci.org/beeware/galley.svg?branch=master
+    :target: https://travis-ci.org/beeware/galley
 
-.. image:: https://badges.gitter.im/pybee/general.svg
-    :target: https://gitter.im/pybee/general
+.. image:: https://badges.gitter.im/beeware/general.svg
+    :target: https://gitter.im/beeware/general
 
 GUI tool to assist in drafting documentation.
 
@@ -30,7 +30,7 @@ Quickstart
 
 In your virtualenv, install Galley, and then run it::
 
-    $ pip install galley
+    $ pip install galley-proof
     $ galley
 
 This will pop up a GUI window.
@@ -39,10 +39,11 @@ Problems under Ubuntu
 ~~~~~~~~~~~~~~~~~~~~~
 
 Ubuntu's packaging of Python omits the ``idlelib`` library from it's base
-packge. If you're using Python 2.7 on Ubuntu 13.04, you can install
+packge. If you're using Python on Ubuntu, you can install
 ``idlelib`` by running::
 
-    $ sudo apt-get install idle-python2.7
+    $ sudo apt-get update
+    $ sudo apt-get install idle3
 
 For other versions of Python and Ubuntu, you'll need to adjust this as
 appropriate.
@@ -53,7 +54,7 @@ Problems under Windows
 If you're running Galley in a virtualenv, you'll need to set an
 environment variable so that Galley can find the TCL graphics library::
 
-    $ set TCL_LIBRARY=c:\Python27\tcl\tcl8.5
+    $ set TCL_LIBRARY=c:\Python35\tcl\tcl8.6
 
 You'll need to adjust the exact path to reflect your local Python install.
 You may find it helpful to put this line in the ``activate.bat`` script
@@ -72,7 +73,7 @@ Galley is part of the `BeeWare suite`_. You can talk to the community through:
 
 * `@pybeeware on Twitter`_
 
-* The `pybee/general`_ channel on Gitter.
+* The `beeware/general`_ channel on Gitter.
 
 We foster a welcoming and respectful community as described in our
 `BeeWare Community Code of Conduct`_.
@@ -83,11 +84,11 @@ Contributing
 If you experience problems with Galley, `log them on GitHub`_. If you
 want to contribute code, please `fork the code`_ and `submit a pull request`_.
 
-.. _BeeWare suite: http://pybee.org
-.. _Read The Docs: https://galley.readthedocs.io
+.. _BeeWare suite: http://beeware.org
+.. _Read The Docs: https://galley-proof.readthedocs.io
 .. _@pybeeware on Twitter: https://twitter.com/pybeeware
-.. _pybee/general: https://gitter.im/pybee/general
-.. _BeeWare Community Code of Conduct: http://pybee.org/community/behavior/
-.. _log them on Github: https://github.com/pybee/galley/issues
-.. _fork the code: https://github.com/pybee/galley
-.. _submit a pull request: https://github.com/pybee/galley/pulls
+.. _beeware/general: https://gitter.im/beeware/general
+.. _BeeWare Community Code of Conduct: http://beeware.org/community/behavior/
+.. _log them on Github: https://github.com/beeware/galley/issues
+.. _fork the code: https://github.com/beeware/galley
+.. _submit a pull request: https://github.com/beeware/galley/pulls
