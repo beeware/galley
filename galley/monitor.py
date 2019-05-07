@@ -1,7 +1,6 @@
-from collections import namedtuple
 import os
 import sys
-
+from collections import namedtuple
 
 ######################################################################
 # Output message types

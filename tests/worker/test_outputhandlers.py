@@ -1,18 +1,9 @@
 import unittest
+from queue import Queue
 
-try:
-    from Queue import Queue
-except ImportError:
-    from queue import Queue  # python 3.x
-
-from galley.worker import (
-    ANSIOutputHandler,
-    SphinxStatusHandler,
-    SphinxWarningHandler,
-    Output,
-    WarningOutput,
-    Progress,
-)
+from galley.worker import (ANSIOutputHandler, Output, Progress,
+                           SphinxStatusHandler, SphinxWarningHandler,
+                           WarningOutput)
 
 
 class ANSIOutputHandlerTest(unittest.TestCase):
@@ -167,12 +158,18 @@ class SphinxStatusHandlerTest(unittest.TestCase):
         output = self.queue.get(block=False)
         self.assertEqual(output, Output(message="copying downloadable files... [ 80%] /path/to/other_file.bat"))
         output = self.queue.get(block=False)
-        self.assertEqual(output, Progress(stage='copying downloadable files', progress=80, context='/path/to/other_file.bat'))
+        self.assertEqual(
+            output,
+            Progress(stage='copying downloadable files', progress=80, context='/path/to/other_file.bat')
+        )
 
         output = self.queue.get(block=False)
         self.assertEqual(output, Output(message="copying downloadable files... [100%] /path/to/3rd-file.sh"))
         output = self.queue.get(block=False)
-        self.assertEqual(output, Progress(stage='copying downloadable files', progress=100, context='/path/to/3rd-file.sh'))
+        self.assertEqual(
+            output,
+            Progress(stage='copying downloadable files', progress=100, context='/path/to/3rd-file.sh')
+        )
 
         # Nothing left in the queue
         self.assertTrue(self.queue.empty())
@@ -190,34 +187,58 @@ class SphinxWarningHandlerTest(unittest.TestCase):
         self.handler.flush()
 
         output = self.queue.get(block=False)
-        self.assertEqual(output, WarningOutput(filename=None, lineno=None, message="html_static_path entry '/beeware/galley/docs/_static' does not exist"))
+        self.assertEqual(
+            output,
+            WarningOutput(
+                filename=None,
+                lineno=None,
+                message="html_static_path entry '/beeware/galley/docs/_static' does not exist"
+            )
+        )
 
         # Nothing left in the queue
         self.assertTrue(self.queue.empty())
 
-
-    def test_file_warning(self):
+    def test_file_warning_missing_for_document(self):
         "A warning message that mentions a filename is parsed for file name/number content"
 
-        self.handler.write("/beeware/galley/docs/internals/newfile.rst:: WARNING: document isn't included in any toctree")
+        self.handler.write(
+            "/beeware/galley/docs/internals/newfile.rst:: "
+            "WARNING: document isn't included in any toctree"
+        )
         self.handler.flush()
 
         output = self.queue.get(block=False)
-        self.assertEqual(output, WarningOutput(filename='/beeware/galley/docs/internals/newfile.rst', lineno=None, message="document isn't included in any toctree"))
+        self.assertEqual(
+            output,
+            WarningOutput(
+                filename="/beeware/galley/docs/internals/newfile.rst",
+                lineno=None,
+                message="document isn't included in any toctree"
+            )
+        )
 
         # Nothing left in the queue
         self.assertTrue(self.queue.empty())
 
-
-
-    def test_file_warning(self):
+    def test_file_warning_for_glob_match(self):
         "A warning message that mentions a filename is parsed for file name/number content"
 
-        self.handler.write("/beeware/galley/docs/index.rst:65: WARNING: toctree glob pattern u'releases' didn't match any documents")
+        self.handler.write(
+            "/beeware/galley/docs/index.rst:65: "
+            "WARNING: toctree glob pattern u'releases' didn't match any documents"
+        )
         self.handler.flush()
 
         output = self.queue.get(block=False)
-        self.assertEqual(output, WarningOutput(filename='/beeware/galley/docs/index.rst', lineno=65, message="toctree glob pattern u'releases' didn't match any documents"))
+        self.assertEqual(
+            output,
+            WarningOutput(
+                filename="/beeware/galley/docs/index.rst",
+                lineno=65,
+                message="toctree glob pattern u'releases' didn't match any documents"
+            )
+        )
 
         # Nothing left in the queue
         self.assertTrue(self.queue.empty())

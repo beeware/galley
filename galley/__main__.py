@@ -1,9 +1,8 @@
 '''
 This is the main entry point for the Galley GUI.
 '''
-from tkinter import *
-
 import argparse
+from tkinter import Tk
 
 from galley import VERSION
 from galley.view import MainWindow
@@ -40,6 +39,7 @@ def main():
         view.mainloop()
     except KeyboardInterrupt:
         view.cmd_quit()
+
 
 if __name__ == '__main__':
     main()

@@ -4,34 +4,25 @@
 This is the "View" of the MVC world.
 """
 import os
-from queue import Query, Empty
 import threading
-from tkinter import *
-from tkinter.font import *
-from tkinter.ttk import *
 import tkinter.messagebox as tkMessageBox
-from urllib.parse import urlparse
 import webbrowser
+from queue import Empty, Queue
+from tkinter import (ACTIVE, DISABLED, END, FALSE, HORIZONTAL, NORMAL,
+                     VERTICAL, WORD, E, IntVar, Menu, N, S, StringVar, W)
+from tkinter.ttk import (Button, Frame, Label, PanedWindow, Progressbar,
+                         Scrollbar, Sizegrip)
+from urllib.parse import urlparse
 
 from tkreadonly import ReadOnlyText
 
-from galley import VERSION, NUM_VERSION
-from galley.widgets import SimpleHTMLView, FileView
-from galley.monitor import file_monitor, FileChange
-from galley.worker import (
-    sphinx_worker,
-    ReloadConfig,
-    BuildAll,
-    BuildSpecific,
-    Quit,
-    Output,
-    WarningOutput,
-    Progress,
-    InitializationStart,
-    InitializationEnd,
-    BuildStart,
-    BuildEnd
-)
+from galley import NUM_VERSION, VERSION
+from galley.monitor import FileChange, file_monitor
+from galley.widgets import FileView, SimpleHTMLView
+from galley.worker import (BuildAll, BuildEnd, BuildSpecific, BuildStart,
+                           InitializationEnd, InitializationStart, Output,
+                           Progress, Quit, ReloadConfig, WarningOutput,
+                           sphinx_worker)
 
 
 def filename_normalizer(base_path):
@@ -47,7 +38,6 @@ def filename_normalizer(base_path):
         else:
             return filename
     return _normalizer
-
 
 
 class MainWindow(object):
@@ -114,13 +104,19 @@ class MainWindow(object):
         # Set up a background worker thread to build docs.
         self.work_queue = Queue()
         self.results_queue = Queue()
-        self.worker_thread = threading.Thread(target=sphinx_worker, args=(os.path.join(self.base_path, 'docs'), self.work_queue, self.results_queue))
+        self.worker_thread = threading.Thread(
+            target=sphinx_worker,
+            args=(os.path.join(self.base_path, 'docs'), self.work_queue, self.results_queue)
+        )
         self.worker_thread.daemon = True
         self.worker_thread.start()
 
         # Set up a background monitor thread.
         self.stop_event = threading.Event()
-        self.monitor_thread = threading.Thread(target=file_monitor, args=(os.path.join(self.base_path, 'docs'), self.stop_event, self.results_queue))
+        self.monitor_thread = threading.Thread(
+            target=file_monitor,
+            args=(os.path.join(self.base_path, 'docs'), self.stop_event, self.results_queue)
+        )
         self.monitor_thread.daemon = True
         self.monitor_thread.start()
 
@@ -128,12 +124,12 @@ class MainWindow(object):
         # as fast as we need to update to match human visual acuity)
         self.root.after(40, self.handle_background_tasks)
 
-
     ######################################################
     # Internal GUI layout methods.
     ######################################################
 
     def _setup_menubar(self):
+
         # Menubar
         self.menubar = Menu(self.root)
 
@@ -176,7 +172,11 @@ class MainWindow(object):
         self.forward_button = Button(self.toolbar, text='▶', command=self.cmd_forward, state=DISABLED)
         self.forward_button.grid(column=1, row=0)
 
-        self.rebuild_all_button = Button(self.toolbar, text='Rebuild all', command=self.cmd_rebuild_all, state=DISABLED)
+        self.rebuild_all_button = Button(
+            self.toolbar,
+            text='Rebuild all',
+            command=self.cmd_rebuild_all,
+            state=DISABLED)
         self.rebuild_all_button.grid(column=2, row=0)
 
         self.rebuild_file_button = Button(self.toolbar, text='Rebuild', command=self.cmd_rebuild_file, state=DISABLED)
@@ -215,7 +215,11 @@ class MainWindow(object):
         self.project_file_tree_frame = Frame(self.content)
         self.project_file_tree_frame.grid(column=0, row=0, sticky=(N, S, E, W))
 
-        self.project_file_tree = FileView(self.project_file_tree_frame, normalizer=self.filename_normalizer, root=os.path.join(self.base_path, 'docs'))
+        self.project_file_tree = FileView(
+            self.project_file_tree_frame,
+            normalizer=self.filename_normalizer,
+            root=os.path.join(self.base_path, 'docs')
+        )
         self.project_file_tree.grid(column=0, row=0, sticky=(N, S, E, W))
 
         # # The tree's vertical scrollbar
@@ -258,7 +262,14 @@ class MainWindow(object):
 
         self.warnings = ReadOnlyText(self.html_frame, height=6)
         self.warnings.grid(column=1, row=2, pady=5, columnspan=2, sticky=(N, S, E, W,))
-        self.warnings.tag_configure('warning', wrap=WORD, lmargin1=5, lmargin2=20, spacing1=2, spacing3=2)
+        self.warnings.tag_configure(
+            'warning',
+            wrap=WORD,
+            lmargin1=5,
+            lmargin2=20,
+            spacing1=2,
+            spacing3=2
+        )
         self.warnings_scrollbar = Scrollbar(self.html_frame, orient=VERTICAL)
         self.warnings_scrollbar.grid(column=2, row=2, pady=5, sticky=(N, S))
         self.warnings.config(yscrollcommand=self.warnings_scrollbar.set)
@@ -287,7 +298,13 @@ class MainWindow(object):
 
         # Progress bar; initially started, because we don't know how long initialization will take.
         self.progress_value = IntVar()
-        # self.progress = Progressbar(self.statusbar, orient=HORIZONTAL, length=200, mode='indeterminate', maximum=100, variable=self.progress_value)
+        # self.progress = Progressbar(
+        #     self.statusbar,
+        #     orient=HORIZONTAL,
+        #     length=200,
+        #     mode='indeterminate',
+        #     maximum=100,
+        #     variable=self.progress_value)
         self.progress = Progressbar(self.statusbar, orient=HORIZONTAL, length=200, mode='indeterminate')
         self.progress.grid(column=1, row=0, sticky=(W, E))
 
@@ -314,7 +331,10 @@ class MainWindow(object):
         """
         # TEMP: Rework into HTML view
         path, ext = os.path.splitext(filename)
-        compiled_filename = path.replace(os.path.join(self.base_path, 'docs'), os.path.join(self.base_path, 'docs', '_build', 'json')) + '.fjson'
+        compiled_filename = path.replace(
+            os.path.join(self.base_path, 'docs'),
+            os.path.join(self.base_path, 'docs', '_build', 'json')
+        ) + '.fjson'
 
         # Set the filename label for the current file
         self.current_file.set(self.filename_normalizer(filename))
@@ -348,7 +368,9 @@ class MainWindow(object):
                 self._traversing_history = False
 
         except IOError:
-            tkMessageBox.showerror(message='%s has not been compiled to HTML' % self.filename_normalizer(filename))
+            tkMessageBox.showerror(
+                message='%s has not been compiled to HTML' % self.filename_normalizer(filename)
+            )
 
     def _show_warnings(self, filename):
         "Show the warnings output panel"
@@ -376,11 +398,9 @@ class MainWindow(object):
             self.warnings.insert(END, warning, 'warning')
             self.warnings.insert(END, '\n')
 
-
     ######################################################
     # TK Main loop
     ######################################################
-
     def mainloop(self):
         self.root.mainloop()
 
@@ -427,7 +447,9 @@ class MainWindow(object):
                     self.source_extension = result.extension
 
                     # Set the initial file
-                    self.project_file_tree.selection_set(os.path.join(self.base_path, 'docs', 'index' + self.source_extension))
+                    self.project_file_tree.selection_set(
+                        os.path.join(self.base_path, 'docs', 'index' + self.source_extension)
+                    )
 
                 elif isinstance(result, BuildStart):
                     # Build start; set up the progress bar, set initial progress to 0
@@ -639,4 +661,3 @@ class MainWindow(object):
                 self.project_file_tree.selection_set(index_filename)
             else:
                 tkMessageBox.showerror(message="Couldn't find %s" % self.filename_normalizer(filename))
-
