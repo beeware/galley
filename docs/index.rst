@@ -17,10 +17,11 @@ Problems under Ubuntu/Debian
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Deian and Ubuntu's packaging of Python omits the ``idlelib`` library from it's
-base packge. If you're using Python 2.7 on Ubuntu 13.04, you can install
+base packge. If you're using Python on Ubuntu, you can install
 ``idlelib`` by running::
 
-    $ sudo apt-get install idle-python2.7
+    $ sudo apt-get update
+    $ sudo apt-get install idle3
 
 For other versions of Python, Ubuntu and Debian, you'll need to adjust this as
 appropriate.
@@ -31,7 +32,7 @@ Problems under Windows
 If you're running Galley in a virtualenv, you'll need to set an
 environment variable so that Galley can find the TCL graphics library::
 
-    $ set TCL_LIBRARY=c:\Python27\tcl\tcl8.5
+    $ set TCL_LIBRARY=c:\Python35\tcl\tcl8.6
 
 You'll need to adjust the exact path to reflect your local Python install.
 You may find it helpful to put this line in the ``activate.bat`` script
