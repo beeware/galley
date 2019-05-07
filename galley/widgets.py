@@ -1,12 +1,11 @@
 # -*- coding: UTF-8 -*-
 import json
 import os
-from ttk import *
-from Tkinter import *
+from tkinter.ttk import *
+from tkinter import *
 from xml.etree import ElementTree as et
 
 from tkreadonly import normalize_sequence
-
 from galley.monitor import project_visitor
 
 
@@ -354,7 +353,7 @@ class RenderContext(object):
         self.frames.append(frame)
 
         self._apply(1)
-        # print "START CONTEXT", frame.node, self.origin
+        # print('START CONTEXT', frame.node, self.origin)
 
     def pop(self):
         # If we're leaving a block element, then:
@@ -373,7 +372,7 @@ class RenderContext(object):
 
     def clear(self):
         # Adjust the y coordinate to match the maximum line height
-        # print "CLEAR", self.origin, self.line_box, [f.node for f in self.frames]
+        # print('CLEAR', self.origin, self.line_box, [f.node for f in self.frames])
         for offset, obj in self.line_box:
             self._widget.coords(
                 obj,
@@ -403,7 +402,7 @@ class SimpleHTMLView(Frame, object):
         self.html.grid(column=0, row=0, sticky=(N, S, E, W))
 
         # Handle canvas resize events by redrawing content.
-        self.html.bind("<Configure>", self.redraw)
+        self.html.bind('<Configure>', self.redraw)
 
         # Set up storage for ID anchors
         self.element_id = {}
@@ -436,9 +435,9 @@ class SimpleHTMLView(Frame, object):
         self.html.config(yscrollcommand=self.vScrollbar.set)
         self.vScrollbar.config(command=self.html.yview)
 
-        self.html.bind_all("<MouseWheel>", self._on_mousewheel)
-        self.html.bind_all("<4>", self._on_mousewheel)
-        self.html.bind_all("<5>", self._on_mousewheel)
+        self.html.bind_all('<MouseWheel>', self._on_mousewheel)
+        self.html.bind_all('<4>', self._on_mousewheel)
+        self.html.bind_all('<5>', self._on_mousewheel)
 
         # Configure the weights for the grid.
         # All the weight goes to the code view.
@@ -456,7 +455,7 @@ class SimpleHTMLView(Frame, object):
 
         words = text.split(' ')
 
-        # print "INSERT", text, context.node.tag, context.font, context.origin, context.x_offset, context.y_offset, max_width, context.tags
+        # print('INSERT', text, context.node.tag, context.font, context.origin, context.x_offset, context.y_offset, max_width, context.tags)
         widget = self.html.create_text(
             context.origin[0] + context.x_offset,
             context.origin[1] + context.y_offset,
@@ -485,7 +484,7 @@ class SimpleHTMLView(Frame, object):
 
         dirty = False
         while end <= len(words):
-            # print 'try', context.x_offset, context.y_offset, ' '.join(words[start:end])
+            # print('try', context.x_offset, context.y_offset, ' '.join(words[start:end]))
             self.html.itemconfig(widget, text=' '.join(words[start:end]))
 
             # Get the dimensions of the rendered text.
@@ -493,7 +492,7 @@ class SimpleHTMLView(Frame, object):
             height = y2 - y
             width = x2 - x
 
-            # print "END/HEIGHT", context.x_offset + width, height
+            # print('END/HEIGHT', context.x_offset + width, height)
 
             if height > context.line_box_height:
                 context.line_box_height = height
@@ -502,7 +501,7 @@ class SimpleHTMLView(Frame, object):
                 # if start == end - 1:
                 #     raise WindowTooSmallException()
 
-                # print "   LINE OVERRUN; output:",' '.join(words[start:end - 1]), 'width',width
+                # print('   LINE OVERRUN; output:',' '.join(words[start:end - 1]), 'width',width)
                 # We've exceeded the line length. Output the line.
                 self.html.itemconfig(widget,
                     text=' '.join(words[start:end - 1])
@@ -513,10 +512,10 @@ class SimpleHTMLView(Frame, object):
                 context.line_box.append(((context.x_offset, context.y_offset), widget))
                 start = end - 1
                 end = start
-                # print "Remainder", words[start:], start, end, len(words)
+                # print('Remainder', words[start:], start, end, len(words))
 
                 # Clear the line.
-                # print "CLEAR BY FULL LINE BOX"
+                # print('CLEAR BY FULL LINE BOX')
                 context.clear()
 
                 # Set up a new empty text container.
@@ -543,7 +542,7 @@ class SimpleHTMLView(Frame, object):
             end = end + 1
 
         if dirty:
-            # print "   BLOCK FITS; output:",' '.join(words[start:end - 1]), 'width',width
+            # print('   BLOCK FITS; output:', ' '.join(words[start:end - 1]), 'width', width)
             context.line_box.append(((context.x_offset, context.y_offset), widget))
             context.x_offset += width
 
@@ -556,7 +555,7 @@ class SimpleHTMLView(Frame, object):
             else:
                 normalized = node.text.replace('\n',' ').strip()
             if normalized:
-                # print "   ", node.tag, 'text', normalized.split()
+                # print('   ', node.tag, 'text', normalized.split())
                 self._insert_text(normalized, context)
 
         for child in node:
@@ -570,7 +569,7 @@ class SimpleHTMLView(Frame, object):
             else:
                 normalized = node.tail.replace('\n',' ').strip()
             if normalized:
-                # print "   ", node.tag, 'tail', normalized.split()
+                # print('   ', node.tag, 'tail', normalized.split())
                 self._insert_text(normalized, context)
 
     def _on_mousewheel(self, event):
@@ -584,7 +583,7 @@ class SimpleHTMLView(Frame, object):
             else:
                 delta = -1 * event.delta / 120
 
-            self.html.yview_scroll(delta, "units")
+            self.html.yview_scroll(delta, 'units')
 
     @property
     def filename(self):
@@ -613,11 +612,11 @@ class SimpleHTMLView(Frame, object):
                 self.html.delete(ALL)
                 context = RenderContext(self.html)
                 self._display(self.document, context)
-                # print "CLEAR BY END OF DRAW"
+                # print('CLEAR BY END OF DRAW')
                 context.clear()
                 self.html.config(scrollregion=self.html.bbox(ALL))
             except WindowTooSmallException:
-                print "Window too small to render."
+                print('Window too small to render.')
 
     def refresh(self):
         "Force a refresh of the file currently in the view"

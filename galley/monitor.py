@@ -13,7 +13,7 @@ FileChange = namedtuple('FileChange', ['new', 'modified'])
 def project_visitor(on_dir, on_file):
     """A filesystem visitor factory
 
-    Returns os.path.walk-compatible visitor functions that will
+    Returns os.walk-compatible visitor functions that will
     invoke on_dir(dirname, data) and on_file(dirname, filename, data)
     whenever a new directory or file is detected, respectively.
     """
@@ -90,12 +90,12 @@ def gather_file(dirname, filename, monitor):
 def file_monitor(base_path, stop_event, output_queue):
     "The actual thread method that checks for file modifications"
     monitor = Monitor()
-    os.path.walk(base_path, project_visitor(gather_dir, gather_file), monitor)
+    os.walk(base_path, project_visitor(gather_dir, gather_file), monitor)
 
     while not stop_event.is_set():
         stop_event.wait(1.0)
         monitor.reset()
-        os.path.walk(base_path, project_visitor(gather_dir, gather_file), monitor)
+        os.walk(base_path, project_visitor(gather_dir, gather_file), monitor)
 
         if monitor.new_files or monitor.modified_files:
             output_queue.put(FileChange(monitor.new_files, monitor.modified_files))

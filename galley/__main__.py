@@ -1,7 +1,7 @@
 '''
 This is the main entry point for the Galley GUI.
 '''
-from Tkinter import *
+from tkinter import *
 
 import argparse
 
@@ -10,8 +10,10 @@ from galley.view import MainWindow
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='GUI tool to assist in drafting documentation.',
+    parser = argparse.ArgumentParser(description='GUI tool to assist in drafting documentation.')
+    parser.add_argument(
+        '--version',
+        action='version',
         version=VERSION
     )
 

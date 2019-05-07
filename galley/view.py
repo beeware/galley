@@ -4,18 +4,14 @@
 This is the "View" of the MVC world.
 """
 import os
+from queue import Query, Empty
 import threading
-from Tkinter import *
-from tkFont import *
-from ttk import *
-import tkMessageBox
-import urlparse
+from tkinter import *
+from tkinter.font import *
+from tkinter.ttk import *
+import tkinter.messagebox as tkMessageBox
+from urllib.parse import urlparse
 import webbrowser
-
-try:
-    from Queue import Queue, Empty
-except ImportError:
-    from queue import Queue, Empty  # python 3.x
 
 from tkreadonly import ReadOnlyText
 
@@ -362,16 +358,16 @@ class MainWindow(object):
         # First, the global warnings
         for (lineno, warning) in self.warning_output.get(None, []):
             if lineno:
-                warnings.append(u'○ Line %s: %s' % (lineno, warning))
+                warnings.append('○ Line %s: %s' % (lineno, warning))
             else:
-                warnings.append(u'○ %s' % warning)
+                warnings.append('○ %s' % warning)
 
         # Then, the file specific warnings.
         for (lineno, warning) in self.warning_output.get(filename, []):
             if lineno:
-                warnings.append(u'● Line %s: %s' % (lineno, warning))
+                warnings.append('● Line %s: %s' % (lineno, warning))
             else:
-                warnings.append(u'● %s' % warning)
+                warnings.append('● %s' % warning)
 
         # If there are warnings, show the widget, and populate it.
         # Otherwise, hide the widget.
@@ -629,7 +625,7 @@ class MainWindow(object):
 
     def on_link_click(self, event):
         "When a link is clicked, open the new URL"
-        url_parts = urlparse.urlparse(event.url)
+        url_parts = urlparse(event.url)
         if url_parts.netloc and url_parts.scheme:
             webbrowser.open_new(event.url)
         else:
