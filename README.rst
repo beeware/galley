@@ -1,6 +1,6 @@
-.. image:: http://pybee.org/project/projects/tools/galley/galley.png
+.. image:: https://beeware.org/project/projects/tools/galley/galley.png
     :width: 72px
-    :target: https://pybee.org/galley
+    :target: https://beeware.org/galley
 
 Galley
 ======
