@@ -64,3 +64,4 @@ def part_string(part, i):
     return s
 
 VERSION = "".join(part_string(nv, i) for i, nv in enumerate(NUM_VERSION))
+__version__ = VERSION
