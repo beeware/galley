@@ -88,7 +88,7 @@ want to contribute code, please `fork the code`_ and `submit a pull request`_.
 .. _BeeWare suite: https://beeware.org
 .. _Read The Docs: https://galley.readthedocs.io
 .. _@pybeeware on Twitter: https://twitter.com/pybeeware
-.. _BeeWare Community Code of Conduct: http://beeware.org/community/behavior/
+.. _BeeWare Community Code of Conduct: https://beeware.org/community/behavior/
 .. _log them on Github: https://github.com/beeware/galley/issues
 .. _fork the code: https://github.com/beeware/galley
 .. _submit a pull request: https://github.com/beeware/galley/pulls
