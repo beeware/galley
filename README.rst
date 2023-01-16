@@ -15,13 +15,15 @@ Galley
     :target: https://pypi.python.org/pypi/galley
 
 .. image:: https://img.shields.io/pypi/l/galley.svg
-    :target: https://github.com/pybee/galley/blob/master/LICENSE
+    :target: https://github.com/pybee/galley/blob/main/LICENSE
 
-.. image:: https://travis-ci.org/pybee/galley.svg?branch=master
-    :target: https://travis-ci.org/pybee/galley
+.. image:: https://github.com/beeware/galley/workflows/CI/badge.svg?branch=main
+   :target: https://github.com/beeware/galley/actions
+   :alt: Build Status
 
-.. image:: https://badges.gitter.im/pybee/general.svg
-    :target: https://gitter.im/pybee/general
+.. image:: https://img.shields.io/discord/836455665257021440?label=Discord%20Chat&logo=discord&style=plastic
+   :target: https://beeware.org/bee/chat/
+   :alt: Discord server
 
 GUI tool to assist in drafting documentation.
 
@@ -72,7 +74,7 @@ Galley is part of the `BeeWare suite`_. You can talk to the community through:
 
 * `@pybeeware on Twitter`_
 
-* The `pybee/general`_ channel on Gitter.
+* `Discord <https://beeware.org/bee/chat/>`__
 
 We foster a welcoming and respectful community as described in our
 `BeeWare Community Code of Conduct`_.
@@ -83,11 +85,10 @@ Contributing
 If you experience problems with Galley, `log them on GitHub`_. If you
 want to contribute code, please `fork the code`_ and `submit a pull request`_.
 
-.. _BeeWare suite: http://pybee.org
+.. _BeeWare suite: https://beeware.org
 .. _Read The Docs: https://galley.readthedocs.io
 .. _@pybeeware on Twitter: https://twitter.com/pybeeware
-.. _pybee/general: https://gitter.im/pybee/general
-.. _BeeWare Community Code of Conduct: http://pybee.org/community/behavior/
-.. _log them on Github: https://github.com/pybee/galley/issues
-.. _fork the code: https://github.com/pybee/galley
-.. _submit a pull request: https://github.com/pybee/galley/pulls
+.. _BeeWare Community Code of Conduct: http://beeware.org/community/behavior/
+.. _log them on Github: https://github.com/beeware/galley/issues
+.. _fork the code: https://github.com/beeware/galley
+.. _submit a pull request: https://github.com/beeware/galley/pulls
