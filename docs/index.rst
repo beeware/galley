@@ -42,24 +42,28 @@ virtualenv is activated.
 Documentation
 -------------
 
-Documentation for Galley can be found on `Read The Docs`_.
+Documentation for Galley can be found on `Read The Docs <https://galley.readthedocs.io>`__.
 
 Community
 ---------
 
-Galley is part of the `BeeWare suite`_. You can talk to the community through:
+Galley is part of the `BeeWare suite <https://beeware.org>`__. You can talk to the
+community through:
 
- * `@pybeeware on Twitter`_
+* `@beeware@fosstodon.org on Mastodon <https://fosstodon.org/@beeware>`__
 
- * The `BeeWare Users Mailing list`_, for questions about how to use the BeeWare suite.
+* `Discord <https://beeware.org/bee/chat/>`__
 
- * The `BeeWare Developers Mailing list`_, for discussing the development of new features in the BeeWare suite, and ideas for new tools for the suite.
+We foster a welcoming and respectful community as described in our `BeeWare Community
+Code of Conduct <https://beeware.org/community/behavior/>`__.
 
-.. _BeeWare suite: http://pybee.org
-.. _Read The Docs: https://galley.readthedocs.io
-.. _@pybeeware on Twitter: https://twitter.com/pybeeware
-.. _BeeWare Users Mailing list: https://groups.google.com/forum/#!forum/beeware-users
-.. _BeeWare Developers Mailing list: https://groups.google.com/forum/#!forum/beeware-developers
+Contributing
+------------
+
+If you experience problems with Galley, `log them on GitHub <https://github.com/beeware/galley/issues>`__.
+
+If you want to contribute, please `fork the project <https://github.com/beeware/galley>`__ and `submit a pull request <https://github.com/beeware/galley/pulls>`__.
+
 
 Contents:
 
