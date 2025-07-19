@@ -53,10 +53,6 @@ You may find it helpful to put this line in the `activate.bat` script
 for your virtual environment so that it is automatically set whenever the
 virtualenv is activated.
 
-## Documentation
-
-Documentation for Galley can be found on [Read The Docs](https://galley.readthedocs.io).
-
 ## Community
 
 Galley is part of the [BeeWare suite](https://beeware.org). You can talk to the
