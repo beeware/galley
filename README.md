@@ -1,13 +1,14 @@
 
-[![Galley](https://beeware.org/project/projects/tools/galley/galley.png)](https://beeware.org/galley)
+<img src="https://beeware.org/project/projects/tools/galley/galley.png" alt="Galley" width="75" height="75" href="https://beeware.org/galley"/>
 
 # Galley
 
 [![Galley](https://img.shields.io/pypi/pyversions/galley.svg)](https://pypi.python.org/pypi/galley)
 [![Galley](https://img.shields.io/pypi/v/galley.svg)](https://pypi.python.org/pypi/galley)
 [![Galley](https://img.shields.io/pypi/status/galley.svg)](https://pypi.python.org/pypi/galley)
-[![Build Status](https://img.shields.io/pypi/l/galley.svg)](https://github.com/pybee/galley/blob/main/LICENSE)
-[![Discord server](https://img.shields.io/discord/836455665257021440?label=Discord%20Chat&logo=discord&style=plastic)](https://github.com/beeware/galley/actions)
+[![Galley](https://img.shields.io/pypi/l/galley.svg)](https://github.com/pybee/galley/blob/main/LICENSE)
+[![Build Status](https://github.com/beeware/galley/workflows/CI/badge.svg?branch=main)](https://github.com/beeware/galley/actions)
+[![Discord server](https://img.shields.io/discord/836455665257021440?label=Discord%20Chat&logo=discord&style=plastic)](https://beeware.org/bee/chat/)
 
 GUI tool to assist in drafting documentation.
 
@@ -63,7 +64,7 @@ community through:
 
 - [@beeware@fosstodon.org on Mastodon](https://fosstodon.org/@beeware)
 
-- [Discord ](https://beeware.org/bee/chat/)
+- [Discord](https://beeware.org/bee/chat/)
 
 We foster a welcoming and respectful community as described in our
 [BeeWare Community Code of Conduct](https://beeware.org/community/behavior/).
