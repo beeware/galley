@@ -4,7 +4,7 @@
 This is the "View" of the MVC world.
 """
 import os
-from queue import Query, Empty
+from queue import Queue, Empty
 import threading
 from tkinter import *
 from tkinter.font import *
@@ -639,4 +639,3 @@ class MainWindow(object):
                 self.project_file_tree.selection_set(index_filename)
             else:
                 tkMessageBox.showerror(message="Couldn't find %s" % self.filename_normalizer(filename))
-
