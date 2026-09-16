@@ -2,11 +2,13 @@
 import json
 import logging
 import os
-from tkinter.ttk import *
-from tkinter import *
+import sys
+from tkinter import ALL, SW, VERTICAL, Canvas, E, Frame, N, S, W
+from tkinter.ttk import Scrollbar, Treeview
 from xml.etree import ElementTree as et
 
 from tkreadonly import normalize_sequence
+
 from galley.monitor import project_visitor
 
 
@@ -205,7 +207,7 @@ class RenderContextFrame(object):
             style = STYLE.get(node.tag, {})
 
         for key, value in style.items():
-            setattr(self, key.replace('-','_'), value)
+            setattr(self, key.replace('-', '_'), value)
 
     def __getattr__(self, attr):
         "Silence all AttributeErrors"
@@ -249,6 +251,7 @@ class RenderContextFrame(object):
             return {'href': self.node.attrib['href']}
         return {}
 
+
 class RenderContext(object):
     INHERITED_PROPERTIES = set([
         'color',
@@ -276,7 +279,7 @@ class RenderContext(object):
         value = None
         index = -1
         if attr in RenderContext.INHERITED_PROPERTIES:
-            while value is None or value is 'inherit':
+            while value is None or value == 'inherit':
                 value = getattr(self.frames[index], attr)
                 index = index - 1
         else:
@@ -396,7 +399,8 @@ class SimpleHTMLView(Frame, object):
         self.document = None
 
         # The Main Text Widget
-        self.html = Canvas(self,
+        self.html = Canvas(
+            self,
             # background=self.style.background_color,
         )
 
@@ -446,16 +450,14 @@ class SimpleHTMLView(Frame, object):
         self.columnconfigure(1, weight=0)
         self.rowconfigure(0, weight=1)
 
-
     def _insert_text(self, text, context):
-
         max_width = self.html.winfo_width() - context.origin[0] - context.limits[0]
 
         start = 0
         end = 1
 
         words = text.split(' ')
-
+        
         logging.debug(
             'INSERT %s %s %s %s %s %s %s %s' %
             (text, context.node.tag, context.font, context.origin,
@@ -507,7 +509,8 @@ class SimpleHTMLView(Frame, object):
 
                 logging.debug('   LINE OVERRUN; output: %s, width %s' % (' '.join(words[start:end - 1]), width))
                 # We've exceeded the line length. Output the line.
-                self.html.itemconfig(widget,
+                self.html.itemconfig(
+                    widget,
                     text=' '.join(words[start:end - 1])
                 )
 
@@ -557,7 +560,7 @@ class SimpleHTMLView(Frame, object):
             if context.white_space == 'pre':
                 normalized = node.text.strip()
             else:
-                normalized = node.text.replace('\n',' ').strip()
+                normalized = node.text.replace('\n', ' ').strip()
             if normalized:
                 logging.debug('   %s text %s' % (node.tag, normalized.split()))
                 self._insert_text(normalized, context)
@@ -571,7 +574,7 @@ class SimpleHTMLView(Frame, object):
             if context.white_space == 'pre':
                 normalized = node.tail.strip()
             else:
-                normalized = node.tail.replace('\n',' ').strip()
+                normalized = node.tail.replace('\n', ' ').strip()
             if normalized:
                 logging.debug('   %s tail %s' % (node.tag, normalized.split()))
                 self._insert_text(normalized, context)

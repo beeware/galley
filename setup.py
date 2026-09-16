@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from setuptools import setup
+
 from galley import VERSION
 
 try:

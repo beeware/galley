@@ -1,9 +1,8 @@
-from collections import namedtuple
-import re
 import os
+import re
+from collections import namedtuple
 
 from sphinx.application import Sphinx
-
 
 ######################################################################
 # Command types
@@ -92,8 +91,10 @@ class ANSIOutputHandler(object):
         """
         self.queue.put(Output(message=content))
 
+
 SIMPLE_PROGRESS_RE = re.compile(r'(.+)\.\.\.$')
 PERCENT_PROGRESS_RE = re.compile(r'([\w\s]+)\.\.\. \[([\s\d]{3})\%\] (.+)')
+
 
 class SphinxStatusHandler(ANSIOutputHandler):
     "A Sphinx output handler for normal status update, stripping ANSI codes."
@@ -172,9 +173,19 @@ def sphinx_worker(base_path, work_queue, output_queue):
 
     output_queue.put(InitializationStart())
 
-    sphinx = Sphinx(srcdir, confdir, outdir, doctreedir, buildername,
-                         confoverrides, status, warning, freshenv,
-                         warningiserror, tags)
+    sphinx = Sphinx(
+        srcdir,
+        confdir,
+        outdir,
+        doctreedir,
+        buildername,
+        confoverrides,
+        status,
+        warning,
+        freshenv,
+        warningiserror,
+        tags
+    )
 
     output_queue.put(InitializationEnd(extension=sphinx.config.source_suffix))
 
@@ -189,9 +200,19 @@ def sphinx_worker(base_path, work_queue, output_queue):
         elif isinstance(cmd, ReloadConfig):
             output_queue.put(InitializationStart())
             freshenv = True
-            sphinx = Sphinx(srcdir, confdir, outdir, doctreedir, buildername,
-                             confoverrides, status, warning, freshenv,
-                             warningiserror, tags)
+            sphinx = Sphinx(
+                srcdir,
+                confdir,
+                outdir,
+                doctreedir,
+                buildername,
+                confoverrides,
+                status,
+                warning,
+                freshenv,
+                warningiserror,
+                tags
+            )
             output_queue.put(InitializationEnd(extension=sphinx.config.source_suffix))
 
         elif isinstance(cmd, BuildAll):
