@@ -1,6 +1,10 @@
 
 <img src="https://beeware.org/project/projects/tools/galley/galley.png" alt="Galley" width="75" height="75" href="https://beeware.org/galley"/>
 
+**September 17 2026: This project has been archived**
+
+Between moving to Markdown by preference in the BeeWare project, in-editor Markdown previews, and Mkdocs live reload, the need for a standalone app for documentation preview is much less than it once was.
+
 # Galley
 
 [![Galley](https://img.shields.io/pypi/pyversions/galley.svg)](https://pypi.python.org/pypi/galley)
